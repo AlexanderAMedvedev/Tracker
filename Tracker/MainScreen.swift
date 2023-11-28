@@ -12,7 +12,7 @@ class MainScreen: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        let trackers = Trackers()
+        let trackers = TrackersViewController()
         trackers.tabBarItem = UITabBarItem(
             title: "Трекеры",
             image: UIImage(named: "trackerForTabBar"),
@@ -21,7 +21,7 @@ class MainScreen: UITabBarController {
         let navCon = UINavigationController(rootViewController: trackers)
         
         
-        let statistics = Statistics()
+        let statistics = StatisticsViewController()
         statistics.tabBarItem = UITabBarItem(
             title: "Статистика",
             image: UIImage(named: "hare"),
