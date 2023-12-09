@@ -30,18 +30,5 @@ class MainScreen: UITabBarController {
         
         self.setViewControllers([navCon, statistics], animated: false)
     }
-
-    private func addLogoView() {
-        let logoView = UIImageView(image: UIImage(named: "Logo"))
-        logoView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(logoView)
-        NSLayoutConstraint.activate([
-            logoView.heightAnchor.constraint(equalToConstant: 77.68),
-            logoView.widthAnchor.constraint(equalToConstant: 75),
-            logoView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            logoView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-        ])
-    }
-
 }
 
