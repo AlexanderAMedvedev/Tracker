@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct TrackerRecord {
-    let id: UInt
+struct TrackerRecord: Hashable {
+    let id: UUID
     let date: Date
 }

@@ -12,6 +12,20 @@ final class ScheduleViewController: UIViewController {
     
     let week = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
     
+    var switchStates = [false, false, false, false, false, false, false,]
+    
+    var delegate: NewHabitOrEventViewController?
+    
+    private var timeTable: [Int] = []
+    
+    init(delegate: NewHabitOrEventViewController) {
+        self.delegate = delegate
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .ypWhiteDay
@@ -70,7 +84,14 @@ final class ScheduleViewController: UIViewController {
         }
     
     @objc private func didTapDoneButton() {
-    print("Did tap 'Готово' button")
+        for i in 0..<switchStates.count {
+            if switchStates[i] == true {
+                timeTable.append(i+1)
+            }
+        }
+        delegate?.timeTable = timeTable
+        dismiss(animated: true)
+        //print(timeTable)
     }
 }
 extension ScheduleViewController: UITableViewDataSource {
@@ -86,10 +107,15 @@ extension ScheduleViewController: UITableViewDataSource {
             return UITableViewCell()
         }
         cell.textView.text = week[indexPath.row]
+        cell.switchDay.tag = indexPath.row
+        cell.switchDay.addTarget(self, action: #selector(self.switchValueDidChange(_:)), for: .valueChanged)
+        
         cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         return cell
     }
-    
+    @objc private func switchValueDidChange(_ sender: UISwitch) {
+        switchStates[sender.tag] = sender.isOn
+    }
 }
 
 extension ScheduleViewController: UITableViewDelegate {

@@ -8,11 +8,16 @@
 import Foundation
 import UIKit
 
+protocol TrackerCellDelegate: AnyObject {
+    func completeTracker(id: UUID, at indexPath: IndexPath)
+    func uncompleteTracker(id: UUID, at indexPath: IndexPath)
+}
+
 final class TrackerViewCell: UICollectionViewCell {
     
     static let reuseIdentifier = "TrackerViewCell"
     
-    var timesTapped = 0
+    //var timesTapped = 0
     
     let colorField: UIView = {
        let colorField = UIView()
@@ -37,7 +42,6 @@ final class TrackerViewCell: UICollectionViewCell {
     
     let trackerDoneButton: UIButton = {
         let trackerDoneButton = UIButton(type: .custom)
-        trackerDoneButton.setImage(UIImage(named: "plusButton"), for: .normal)
         return trackerDoneButton
     }()
     
@@ -49,6 +53,27 @@ final class TrackerViewCell: UICollectionViewCell {
         return trackerDaysDone
     }()
     
+    weak var delegate: TrackerCellDelegate?
+    private var trackerId: UUID?
+    private var isCompletedToday: Bool?
+    private var indexPath: IndexPath?
+ //   private var completedDays: Int?
+    
+    func configureCell(_ tracker: Tracker, at indexPath: IndexPath, isCompletedToday: Bool, completedDays: Int) {
+        self.indexPath = indexPath
+        self.isCompletedToday = isCompletedToday
+        trackerId = tracker.id
+        trackerName.text = tracker.name
+        colorField.backgroundColor = tracker.color
+        emoji.text = tracker.emoji
+        
+        let doneImage = UIImage(named: "doneImage")
+        let plusImage = UIImage(named: "plusImage")
+        let image = isCompletedToday ? doneImage : plusImage
+        trackerDoneButton.setImage(image, for: .normal)
+        trackerDoneButton.tintColor = tracker.color
+        trackerDaysDone.text = "\(completedDays) дней"
+    }
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -102,12 +127,15 @@ final class TrackerViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     @objc private func didTapTrackerCellButton() {
-        timesTapped += 1
-        if timesTapped%2 == 1 {
-            trackerDoneButton.setImage(UIImage(named: "doneButton"), for: .normal)
-            trackerDaysDone.text = "1 день"
-        } else if timesTapped%2 == 0 {
-                    trackerDoneButton.setImage(UIImage(named: "plusButton"), for: .normal)
+        guard let trackerId, let indexPath, let isCompletedToday else {
+            assertionFailure("No tracker Id or indexPath")
+            return
+        }
+        
+        if isCompletedToday {
+            delegate?.uncompleteTracker(id: trackerId, at: indexPath)
+        } else {
+            delegate?.completeTracker(id: trackerId, at: indexPath)
         }
     }
 }

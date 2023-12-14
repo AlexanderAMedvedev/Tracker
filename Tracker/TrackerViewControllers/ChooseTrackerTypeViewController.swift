@@ -7,9 +7,24 @@
 
 import Foundation
 import UIKit
+protocol IntermediateDelegateProtocol: AnyObject {
+    func addTracker(_ trackerCategoryHeader: String, _ tracker: Tracker)
+    func closeView()
+}
 
 final class ChooseTrackerTypeViewController: UIViewController {
-        
+    
+    var delegate: AddTrackerDelegateProtocol?
+    
+    init(delegate: AddTrackerDelegateProtocol) {
+        self.delegate = delegate
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         view.backgroundColor = .ypWhiteDay
         addHeader()
@@ -51,7 +66,7 @@ final class ChooseTrackerTypeViewController: UIViewController {
    }
     @objc
     private func didTapHabitButton() {
-        let newHabit = NewHabitOrEventViewController(headerString: "Новая привычка", optionsString: ["Категория","Расписание"])
+        let newHabit = NewHabitOrEventViewController(headerString: "Новая привычка", optionsString: ["Категория","Расписание"], delegate: self)
         present(newHabit, animated: true)
     }
     
@@ -76,7 +91,18 @@ final class ChooseTrackerTypeViewController: UIViewController {
     
     @objc
     private func didTapOneEventButton() {
-        let newEvent = NewHabitOrEventViewController(headerString: "Новое нерегулярное событие", optionsString: ["Категория"])
+        let newEvent = NewHabitOrEventViewController(headerString: "Новое нерегулярное событие", optionsString: ["Категория"], delegate: self)
         present(newEvent, animated: true)
+    }
+    
+}
+extension ChooseTrackerTypeViewController: IntermediateDelegateProtocol {
+    func addTracker(_ trackerCategoryHeader: String , _ tracker: Tracker) {
+        delegate?.addTracker(trackerCategoryHeader, tracker)
+        dismiss(animated: true)
+    }
+    
+    func closeView() {
+        dismiss(animated: true)
     }
 }

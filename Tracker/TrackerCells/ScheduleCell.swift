@@ -18,7 +18,7 @@ final class ScheduleCell: UITableViewCell {
         return textView
     }()
     
-    private let switchDay: UISwitch = {
+    let switchDay: UISwitch = {
         let switchDay = UISwitch()
         switchDay.onTintColor = .blue
         switchDay.isOn = false

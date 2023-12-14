@@ -9,13 +9,9 @@ import Foundation
 import UIKit
 
 struct Tracker {
-    //let id: UInt
+    let id: UUID
     let name: String
     let color: UIColor
     let emoji: String
-    let timetable: TimeTable
-}
-
-struct TimeTable {
-    let daysInWeek: [Int]
+    let schedule: [Int]
 }

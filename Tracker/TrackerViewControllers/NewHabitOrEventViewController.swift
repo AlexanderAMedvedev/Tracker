@@ -12,15 +12,24 @@ final class NewHabitOrEventViewController: UIViewController {
     
     var headerString: String
     
+    var trackerCategoryHeader: String?
+    
     var optionsString: [String]
     
     let optionsTableView = UITableView()
+    
+    let textField = TrackerNameTextField()
+    
+    var timeTable: [Int] = []
 
     let emojies = ["🙂","😻","🌺","🐶","❤️","😱","😇","😡","🥇","🥶","🤔","🙌","🍔","🥦","🏓","🎸","🏝","😪"]
     
-    init(headerString: String, optionsString: [String]) {
+    weak var delegate: IntermediateDelegateProtocol?
+    
+    init(headerString: String, optionsString: [String], delegate: IntermediateDelegateProtocol) {
         self.headerString = headerString
         self.optionsString = optionsString
+        self.delegate = delegate
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -95,7 +104,7 @@ final class NewHabitOrEventViewController: UIViewController {
     }
     
     private func addInputTextField() {
-        let textField = TrackerNameTextField()
+        //let textField = TrackerNameTextField()
         textField.placeholder = "Введите название трекера"
         textField.font = UIFont.systemFont(ofSize: 17)
         textField.clearButtonMode = UITextField.ViewMode.whileEditing
@@ -149,12 +158,28 @@ final class NewHabitOrEventViewController: UIViewController {
             
     @objc private func didTapCancelButton() {
         dismiss(animated: true)
+        delegate?.closeView()
     }
             
     @objc private func didTapCreateButton() {
-        print("Create was Tapped")
+        createTracker()
+        dismiss(animated: true)
     }
     
+    func createTracker() {
+        guard let trackerCategoryHeader else { return }
+        //создание расписания для нерегулярного трекера
+        if timeTable.count == 0 {
+            timeTable = [1,2,3,4,5,6,7]
+        }
+            let tracker = Tracker(id: UUID(),
+                                  name: textField.text ?? "",
+                                  color: .blue,
+                                  emoji: "🙂",
+                                  schedule: timeTable
+                                  )
+        delegate?.addTracker(trackerCategoryHeader, tracker)
+        }
 }
 
 extension NewHabitOrEventViewController: UITableViewDataSource, UITableViewDelegate  {
@@ -178,9 +203,9 @@ extension NewHabitOrEventViewController: UITableViewDataSource, UITableViewDeleg
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == 0 {
-            print("Tapped Category button")
+            trackerCategoryHeader = "Важное"
         } else {
-            let scheduleViewController = ScheduleViewController()
+            let scheduleViewController = ScheduleViewController(delegate: self)
             present(scheduleViewController, animated: true)
         }
     }
