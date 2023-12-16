@@ -25,6 +25,19 @@ final class ScheduleCell: UITableViewCell {
         return switchDay
     }()
     
+    func configureScheduleCell(for indexPath: IndexPath) {
+        if indexPath.row == 0   {
+            contentView.layer.masksToBounds = true
+            contentView.layer.cornerRadius = 16
+            contentView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        } else if indexPath.row == 6 {
+            contentView.layer.masksToBounds = true
+            contentView.layer.cornerRadius = 16
+            contentView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+        }
+        return
+    }
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         

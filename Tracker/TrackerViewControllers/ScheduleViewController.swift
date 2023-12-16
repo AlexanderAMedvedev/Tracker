@@ -54,8 +54,9 @@ final class ScheduleViewController: UIViewController {
         scheduleTable.delegate = self
         scheduleTable.register(ScheduleCell.self, forCellReuseIdentifier: ScheduleCell.reuseIdentifier)
         scheduleTable.translatesAutoresizingMaskIntoConstraints = false
-        scheduleTable.layer.cornerRadius = 16
+
         view.addSubview(scheduleTable)
+        
         NSLayoutConstraint.activate([
             scheduleTable.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
             scheduleTable.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
@@ -111,6 +112,9 @@ extension ScheduleViewController: UITableViewDataSource {
         cell.switchDay.addTarget(self, action: #selector(self.switchValueDidChange(_:)), for: .valueChanged)
         
         cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        
+        cell.configureScheduleCell(for: indexPath)
+        
         return cell
     }
     @objc private func switchValueDidChange(_ sender: UISwitch) {

@@ -14,7 +14,7 @@ protocol IntermediateDelegateProtocol: AnyObject {
 
 final class ChooseTrackerTypeViewController: UIViewController {
     
-    var delegate: AddTrackerDelegateProtocol?
+    weak var delegate: AddTrackerDelegateProtocol?
     
     init(delegate: AddTrackerDelegateProtocol) {
         self.delegate = delegate
@@ -99,10 +99,9 @@ final class ChooseTrackerTypeViewController: UIViewController {
 extension ChooseTrackerTypeViewController: IntermediateDelegateProtocol {
     func addTracker(_ trackerCategoryHeader: String , _ tracker: Tracker) {
         delegate?.addTracker(trackerCategoryHeader, tracker)
-        dismiss(animated: true)
     }
     
     func closeView() {
-        dismiss(animated: true)
+        delegate?.closeView()
     }
 }

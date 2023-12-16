@@ -9,6 +9,7 @@ import Foundation
 import UIKit
 protocol AddTrackerDelegateProtocol: AnyObject {
     func addTracker(_ trackerCategoryHeader: String, _ tracker: Tracker)
+    func closeView()
 }
 
 final class TrackersViewController: UIViewController {
@@ -235,6 +236,10 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 }
 
 extension TrackersViewController: AddTrackerDelegateProtocol {
+    func closeView() {
+        dismiss(animated: true)
+    }
+    
     func addTracker(_ trackerCategoryHeader: String, _ tracker: Tracker) {
         dismiss(animated: true)
         
@@ -270,7 +275,7 @@ extension TrackersViewController: AddTrackerDelegateProtocol {
 
 extension TrackersViewController: TrackerCellDelegate {
     func completeTracker(id: UUID, at indexPath: IndexPath) {
-        var todayDate = Date()
+        let todayDate = Date()
         if currentDate > todayDate {
             print("Попытка изменить запись для будущей даты")
         } else {
@@ -281,7 +286,7 @@ extension TrackersViewController: TrackerCellDelegate {
     }
     
     func uncompleteTracker(id: UUID, at indexPath: IndexPath) {
-        var todayDate = Date()
+        let todayDate = Date()
         if currentDate > todayDate {
             print("Попытка изменить запись для будущей даты")
         } else {

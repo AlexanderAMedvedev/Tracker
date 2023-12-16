@@ -29,7 +29,8 @@ final class TrackerViewCell: UICollectionViewCell {
         let emoji = UILabel()
         emoji.backgroundColor = .ypGrayBackground
         emoji.layer.masksToBounds = true
-        emoji.layer.cornerRadius = 16
+        emoji.layer.cornerRadius = 15
+        emoji.textAlignment = .center
         return emoji
     }()
     
@@ -42,6 +43,9 @@ final class TrackerViewCell: UICollectionViewCell {
     
     let trackerDoneButton: UIButton = {
         let trackerDoneButton = UIButton(type: .custom)
+        trackerDoneButton.layer.masksToBounds = true
+        trackerDoneButton.layer.cornerRadius = 17
+        trackerDoneButton.tintColor = .ypWhiteDay
         return trackerDoneButton
     }()
     
@@ -67,13 +71,30 @@ final class TrackerViewCell: UICollectionViewCell {
         colorField.backgroundColor = tracker.color
         emoji.text = tracker.emoji
         
-        let doneImage = UIImage(named: "doneImage")
-        let plusImage = UIImage(named: "plusImage")
-        let image = isCompletedToday ? doneImage : plusImage
-        trackerDoneButton.setImage(image, for: .normal)
-        trackerDoneButton.tintColor = tracker.color
-        trackerDaysDone.text = "\(completedDays) дней"
+        let doneImageName = "checkmark"
+        let plusImageName = "plus"
+        let imageName = isCompletedToday ? doneImageName : plusImageName
+        trackerDoneButton.setImage(UIImage(systemName: imageName), for: .normal)
+        trackerDoneButton.backgroundColor = tracker.color
+        if imageName == doneImageName {
+            trackerDoneButton.layer.opacity = 0.5
+        }
+
+        trackerDaysDone.text = "\(completedDays) \(setWordDay(completedDays))"
     }
+    
+    private func setWordDay(_ completedDays: Int) -> String {
+        var wordDay = "дней"
+        if completedDays == 1 {
+            wordDay = "день"
+        } else if completedDays > 1 && completedDays < 5 {
+            wordDay = "дня"
+        } else if completedDays >= 5 && completedDays < 21 {
+            wordDay = "дней"
+        }
+        return wordDay
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -90,6 +111,8 @@ final class TrackerViewCell: UICollectionViewCell {
         contentView.addSubview(trackerDoneButton)
         trackerDoneButton.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
+            trackerDoneButton.heightAnchor.constraint(equalToConstant: 34),
+            trackerDoneButton.widthAnchor.constraint(equalToConstant: 34 ),
             trackerDoneButton.topAnchor.constraint(equalTo: colorField.bottomAnchor, constant: 8),
             trackerDoneButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
             trackerDoneButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 121),
@@ -99,7 +122,7 @@ final class TrackerViewCell: UICollectionViewCell {
         contentView.addSubview(emoji)
         emoji.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            emoji.heightAnchor.constraint(equalToConstant: 24),
+            emoji.heightAnchor.constraint(equalToConstant: 30),
             emoji.widthAnchor.constraint(equalTo: emoji.heightAnchor),
             emoji.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
             emoji.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),

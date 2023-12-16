@@ -157,13 +157,11 @@ final class NewHabitOrEventViewController: UIViewController {
     }
             
     @objc private func didTapCancelButton() {
-        dismiss(animated: true)
         delegate?.closeView()
     }
             
     @objc private func didTapCreateButton() {
         createTracker()
-        dismiss(animated: true)
     }
     
     func createTracker() {
