@@ -14,7 +14,7 @@ final class ScheduleViewController: UIViewController {
     
     var switchStates = [false, false, false, false, false, false, false,]
     
-    var delegate: NewHabitOrEventViewController?
+    weak var delegate: NewHabitOrEventViewController?
     
     private var timeTable: [Int] = []
     
@@ -76,7 +76,7 @@ final class ScheduleViewController: UIViewController {
         doneButton.translatesAutoresizingMaskIntoConstraints = false
            view.addSubview(doneButton)
            NSLayoutConstraint.activate([
-            doneButton.heightAnchor.constraint(equalToConstant: 75),
+            doneButton.heightAnchor.constraint(equalToConstant: 60),
             doneButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
             doneButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
             doneButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20)
@@ -91,6 +91,7 @@ final class ScheduleViewController: UIViewController {
             }
         }
         delegate?.timeTable = timeTable
+        delegate?.refreshTable(indexPath: IndexPath(row: 1, section: 0))
         dismiss(animated: true)
         //print(timeTable)
     }
@@ -112,8 +113,12 @@ extension ScheduleViewController: UITableViewDataSource {
         cell.switchDay.addTarget(self, action: #selector(self.switchValueDidChange(_:)), for: .valueChanged)
         
         cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        if indexPath.row == 6 {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: tableView.bounds.size.width, bottom: 0, right: 0)
+        }
         
         cell.configureScheduleCell(for: indexPath)
+        cell.selectionStyle = .none
         
         return cell
     }

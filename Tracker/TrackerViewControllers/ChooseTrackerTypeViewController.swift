@@ -52,18 +52,18 @@ final class ChooseTrackerTypeViewController: UIViewController {
         habitButton.setTitle("Привычка", for: .normal)
         habitButton.setTitleColor(.ypWhiteDay, for: .normal)
         habitButton.layer.cornerRadius = 16
-        habitButton.addTarget(self, action: #selector(self.didTapHabitButton), for: .touchUpInside
-       )
+        habitButton.addTarget(self, action: #selector(self.didTapHabitButton), for: .touchUpInside)
         habitButton.translatesAutoresizingMaskIntoConstraints = false
-       view.addSubview(habitButton)
-       NSLayoutConstraint.activate([
-        habitButton.heightAnchor.constraint(equalToConstant: 60),
-        habitButton.widthAnchor.constraint(equalToConstant: 335),
-        habitButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 390),
-        habitButton.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor)
-       ])
-       return
-   }
+        view.addSubview(habitButton)
+        NSLayoutConstraint.activate([
+            habitButton.heightAnchor.constraint(equalToConstant: 60),
+            habitButton.widthAnchor.constraint(equalToConstant: 335),
+            habitButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 390),
+            habitButton.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor)
+        ])
+        return
+    }
+    
     @objc
     private func didTapHabitButton() {
         let newHabit = NewHabitOrEventViewController(headerString: "Новая привычка", optionsString: ["Категория","Расписание"], delegate: self)

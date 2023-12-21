@@ -112,10 +112,10 @@ final class TrackerViewCell: UICollectionViewCell {
         trackerDoneButton.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             trackerDoneButton.heightAnchor.constraint(equalToConstant: 34),
-            trackerDoneButton.widthAnchor.constraint(equalToConstant: 34 ),
+            trackerDoneButton.widthAnchor.constraint(equalToConstant: 34),
             trackerDoneButton.topAnchor.constraint(equalTo: colorField.bottomAnchor, constant: 8),
-            trackerDoneButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
-            trackerDoneButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 121),
+            //trackerDoneButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
+            //trackerDoneButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 121),
             trackerDoneButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12)
         ])
         
@@ -133,8 +133,8 @@ final class TrackerViewCell: UICollectionViewCell {
         NSLayoutConstraint.activate([
             trackerName.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
             trackerName.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
-            trackerName.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 44),
-            trackerName.bottomAnchor.constraint(equalTo: bottomAnchor,constant: -70),
+            //trackerName.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 44),
+            trackerName.bottomAnchor.constraint(equalTo: colorField.bottomAnchor,constant: -12),
             ])
         
         contentView.addSubview(trackerDaysDone)

@@ -29,6 +29,12 @@ class MainScreen: UITabBarController {
         )
         
         self.setViewControllers([navCon, statistics], animated: false)
+        
+        let topBorder = CALayer()
+        topBorder.frame = CGRect(x: 0, y: 0, width: self.tabBar.frame.size.width, height: 1)
+            topBorder.backgroundColor = UIColor.gray.cgColor // Set the color of the border here
+        self.tabBar.layer.addSublayer(topBorder)
+
     }
 }
 

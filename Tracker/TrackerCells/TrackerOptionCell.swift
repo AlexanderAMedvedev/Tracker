@@ -12,33 +12,64 @@ final class TrackerOptionCell: UITableViewCell {
     
     static let reuseIdentifier = "trackerOptionCell"
     
-    let textView: UILabel = {
+    lazy var mainTitleView: UILabel = {
         let textView = UILabel()
         textView.font = UIFont.systemFont(ofSize: 17)
         textView.textColor = .ypBlackDay
+        textView.text = "TextView"
+        textView.translatesAutoresizingMaskIntoConstraints = false
         return textView
     }()
     
-    private let imageFurtherView = UIImageView(image: UIImage(named: "moveFurther"))
+    lazy var subTitleView: UILabel = {
+        let subTextView = UILabel()
+        subTextView.font = UIFont.systemFont(ofSize: 17)
+        subTextView.textColor = .ypGray
+        subTextView.translatesAutoresizingMaskIntoConstraints = false
+        return subTextView
+    }()
+    
+    lazy private var titleStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.alignment = .fill
+        stackView.distribution = .fillEqually
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
+    }()
+    
+    lazy private var imageFurtherView: UIImageView = {
+        let imageFurtherView = UIImageView(image: UIImage(named: "moveFurther"))
+        imageFurtherView.translatesAutoresizingMaskIntoConstraints = false
+        return imageFurtherView
+    }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        contentView.backgroundColor = .ypGrayBackground
-        contentView.addSubview(textView)
-        textView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            textView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            textView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-        ])
-        contentView.addSubview(imageFurtherView)
-        imageFurtherView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            imageFurtherView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            imageFurtherView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-        ])
+        setupUI()
+        setupLayout()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func setupUI() {
+        contentView.backgroundColor = .ypGrayBackground
+        
+        contentView.addSubview(titleStackView)
+        titleStackView.addArrangedSubview(mainTitleView)
+        titleStackView.addArrangedSubview(subTitleView)
+        
+        contentView.addSubview(imageFurtherView)
+    }
+    
+    private func setupLayout() {
+        NSLayoutConstraint.activate([
+            titleStackView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            titleStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            imageFurtherView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            imageFurtherView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+        ])
     }
 }

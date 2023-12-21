@@ -43,7 +43,7 @@ final class NewHabitOrEventViewController: UIViewController {
         addHeader()
         addInputTextField()
         addOptionsTable()
-        addEmoji()
+       // addEmoji()
         addCancelAndCreateButtons()
     }
     
@@ -57,7 +57,7 @@ final class NewHabitOrEventViewController: UIViewController {
         NSLayoutConstraint.activate([
             optionsTableView.widthAnchor.constraint(equalToConstant: 343),
             optionsTableView.heightAnchor.constraint(equalToConstant: CGFloat(optionsString.count*75)),
-            optionsTableView.topAnchor.constraint(equalTo: view.topAnchor, constant: 237),
+            optionsTableView.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 24),
             optionsTableView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             ])
     }
@@ -105,6 +105,7 @@ final class NewHabitOrEventViewController: UIViewController {
     
     private func addInputTextField() {
         //let textField = TrackerNameTextField()
+        textField.delegate = self
         textField.placeholder = "Введите название трекера"
         textField.font = UIFont.systemFont(ofSize: 17)
         textField.clearButtonMode = UITextField.ViewMode.whileEditing
@@ -115,7 +116,7 @@ final class NewHabitOrEventViewController: UIViewController {
         NSLayoutConstraint.activate([
             textField.widthAnchor.constraint(equalToConstant: 343),
             textField.heightAnchor.constraint(equalToConstant: 75),
-            textField.topAnchor.constraint(equalTo: view.topAnchor, constant: 140),
+            textField.topAnchor.constraint(equalTo: view.topAnchor, constant: 100),
             textField.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
         return
@@ -178,6 +179,10 @@ final class NewHabitOrEventViewController: UIViewController {
                                   )
         delegate?.addTracker(trackerCategoryHeader, tracker)
         }
+    
+    func refreshTable(indexPath: IndexPath) {
+        optionsTableView.reloadRows(at: [indexPath], with: .none)
+    }
 }
 
 extension NewHabitOrEventViewController: UITableViewDataSource, UITableViewDelegate  {
@@ -187,12 +192,51 @@ extension NewHabitOrEventViewController: UITableViewDataSource, UITableViewDeleg
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: TrackerOptionCell.reuseIdentifier, for: indexPath)
+        
         guard let cell = (cell as? TrackerOptionCell) else {
             print("Cell of the needed type was not created")
             return UITableViewCell()
         }
-        cell.textView.text = optionsString[indexPath.row]
+        
+        cell.mainTitleView.text = optionsString[indexPath.row]
         cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        
+        if indexPath.row == optionsString.count - 1 {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: tableView.bounds.size.width, bottom: 0, right: 0)
+        }
+        cell.selectionStyle = .none
+        // set the subtitle in case of "category" cell after pushing the row
+        if indexPath.row == 0 && trackerCategoryHeader != nil {
+            cell.subTitleView.text = trackerCategoryHeader
+        }
+        // set the subtitle in case of "timeTable" cell after pushing "Готово"
+        if indexPath.row == 1 && timeTable.count > 0 {
+            var days: String = ""
+            for day in timeTable {
+                if day == 1 {
+                    days += "Пон., "
+                } else if day == 2 {
+                    days += "Вт., "
+                } else if day == 3 {
+                    days += "Ср., "
+                } else if day == 4 {
+                    days += "Чет., "
+                } else if day == 5 {
+                    days += "Пят., "
+                } else if day == 6 {
+                    days += "Суб., "
+                } else if day == 7 {
+                    days += "Вос., "
+                }
+            }
+            
+            if timeTable.count < 7  {
+                days.removeLast(2)
+                cell.subTitleView.text = days
+            } else if timeTable.count == 7 {
+                cell.subTitleView.text = "Каждый день"
+            }
+    }
         return cell
     }
     
@@ -202,6 +246,7 @@ extension NewHabitOrEventViewController: UITableViewDataSource, UITableViewDeleg
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == 0 {
             trackerCategoryHeader = "Важное"
+            tableView.reloadRows(at: [indexPath], with: .none)
         } else {
             let scheduleViewController = ScheduleViewController(delegate: self)
             present(scheduleViewController, animated: true)
@@ -219,7 +264,16 @@ extension NewHabitOrEventViewController: UICollectionViewDataSource {
             print("Cell of the needed type was not created")
             return UICollectionViewCell()
         }
-        cell.symbol.text = emojies[indexPath.row]
+        cell.emojiSymbol.text = emojies[indexPath.row]
         return cell
     }
+}
+
+extension NewHabitOrEventViewController: UITextFieldDelegate {
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+    
 }

@@ -14,4 +14,5 @@ extension UIColor {
     static var ypGrayBackground: UIColor { UIColor(named: "BackgroundTextField") ?? UIColor.gray }
     static var ypRedCancelButton: UIColor { UIColor(named: "RedCancelButton") ?? UIColor.red }
     static var ypGray: UIColor { UIColor(named: "Gray") ?? UIColor.gray}
+    static var ypBlueSwitch: UIColor { UIColor(named: "colorSwitch") ??  UIColor.blue}
 }

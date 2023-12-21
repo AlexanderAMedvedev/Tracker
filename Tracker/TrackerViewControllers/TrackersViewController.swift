@@ -44,7 +44,8 @@ final class TrackersViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .ypWhiteDay
         
-        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAdd))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "plusAddTracker"), style: .done, target: self, action: #selector(didTapAdd))
+            //barButtonSystemItem: .add, target: self, action: )
         navigationItem.leftBarButtonItem?.tintColor = .ypBlackDay
         
         addDatePicker()
@@ -57,7 +58,7 @@ final class TrackersViewController: UIViewController {
         }
     }
     
-    @objc func datePickerValueChanged(_ sender: UIDatePicker) {
+    @objc private func datePickerValueChanged(_ sender: UIDatePicker) {
         let selectedDate = sender.date
         currentDate = selectedDate
         setTrackersToShow()
@@ -74,17 +75,8 @@ final class TrackersViewController: UIViewController {
     }
     
     private func addHeader()  {
-        let header = UILabel()
-        header.text = "Трекеры"
-        header.font = UIFont.boldSystemFont(ofSize: 34)
-        header.textColor = .ypBlackDay
-        header.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(header)
-        NSLayoutConstraint.activate([
-            header.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 22),
-            header.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16)
-        ])
-        return
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.title = "Трекеры"
     }
     
     private func addStub() {
