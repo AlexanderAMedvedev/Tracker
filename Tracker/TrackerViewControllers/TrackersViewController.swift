@@ -12,7 +12,7 @@ protocol AddTrackerDelegateProtocol: AnyObject {
     func closeView()
 }
 
-final class TrackersViewController: UIViewController {
+final class TrackersViewController: UIViewController, UITextFieldDelegate {
     
     var currentDate = Date()
         
@@ -40,6 +40,13 @@ final class TrackersViewController: UIViewController {
     
     let trackersCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
     
+    private lazy var searchTextField: UISearchTextField = {
+        let textField = UISearchTextField()
+        textField.placeholder = "Поиск"
+        textField.delegate = self
+        return textField
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .ypWhiteDay
@@ -50,12 +57,24 @@ final class TrackersViewController: UIViewController {
         
         addDatePicker()
         addHeader()
+        addSearchTextField()
         setTrackersToShow()
         if showCategories.isEmpty {
             addStub()
         } else {
             addCollectionView()
         }
+    }
+    
+    private func addSearchTextField() {
+        searchTextField.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(searchTextField)
+        NSLayoutConstraint.activate([
+            searchTextField.heightAnchor.constraint(equalToConstant: 36),
+            searchTextField.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+            searchTextField.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            searchTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor)
+            ])
     }
     
     @objc private func datePickerValueChanged(_ sender: UIDatePicker) {
@@ -107,7 +126,10 @@ final class TrackersViewController: UIViewController {
         let datePicker = UIDatePicker()
         datePicker.preferredDatePickerStyle = .compact
         datePicker.datePickerMode = .date
+        datePicker.locale = Locale(identifier: "ru_RU")
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
+        NSLayoutConstraint.activate([
+            datePicker.widthAnchor.constraint(equalToConstant: 120)])
         datePicker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
     }
     private func setTrackersToShow() {
@@ -152,7 +174,7 @@ final class TrackersViewController: UIViewController {
         trackersCollectionView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(trackersCollectionView)
         NSLayoutConstraint.activate([
-            trackersCollectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 90),
+            trackersCollectionView.topAnchor.constraint(equalTo: searchTextField.bottomAnchor, constant: 10),
             trackersCollectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -84),
             trackersCollectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
             trackersCollectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
