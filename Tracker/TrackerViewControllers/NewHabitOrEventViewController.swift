@@ -21,6 +21,11 @@ final class NewHabitOrEventViewController: UIViewController {
     let textField = TrackerNameTextField()
     
     var timeTable: [Int] = []
+    
+    let createButton: UIButton = {
+        var createButton = UIButton(type: .custom)
+        return createButton
+    }()
 
     let emojies = ["🙂","😻","🌺","🐶","❤️","😱","😇","😡","🥇","🥶","🤔","🙌","🍔","🥦","🏓","🎸","🏝","😪"]
     
@@ -135,12 +140,13 @@ final class NewHabitOrEventViewController: UIViewController {
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(cancelButton)
                 
-        let createButton = UIButton(type: .custom)
+        
         createButton.backgroundColor = .ypGray
         createButton.setTitle("Создать", for: .normal)
         createButton.setTitleColor(.ypWhiteDay, for: .normal)
         createButton.layer.cornerRadius = 16
         createButton.addTarget(self, action: #selector(self.didTapCreateButton), for: .touchUpInside)
+        createButton.isEnabled = false
         createButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(createButton)
         
@@ -162,7 +168,9 @@ final class NewHabitOrEventViewController: UIViewController {
     }
             
     @objc private func didTapCreateButton() {
-        createTracker()
+        if let trackerCategoryHeader {
+            createTracker()
+        }
     }
     
     func createTracker() {
@@ -182,6 +190,8 @@ final class NewHabitOrEventViewController: UIViewController {
     
     func refreshTable(indexPath: IndexPath) {
         optionsTableView.reloadRows(at: [indexPath], with: .none)
+        createButton.isEnabled = true
+        createButton.backgroundColor = .ypBlackDay
     }
 }
 

@@ -57,7 +57,7 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate {
         
         addDatePicker()
         addHeader()
-        addSearchTextField()
+       // addSearchTextField()
         setTrackersToShow()
         if showCategories.isEmpty {
             addStub()
@@ -65,8 +65,9 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate {
             addCollectionView()
         }
     }
-    
+
     private func addSearchTextField() {
+        searchTextField.delegate = self
         searchTextField.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(searchTextField)
         NSLayoutConstraint.activate([
@@ -322,6 +323,12 @@ extension TrackersViewController: TrackerCellDelegate {
             trackersCollectionView.reloadItems(at: [indexPath])
         }
     }
+}
+
+extension TrackersViewController: UISearchTextFieldDelegate {
     
-    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
 }
