@@ -16,8 +16,8 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate {
     
     var currentDate = Date()
         
-    var categories: [TrackerCategory] = [
-        TrackerCategory(header: "Важное",
+    var categories: [TrackerCategory] = []
+        /*TrackerCategory(header: "Важное",
                         relevantTrackers: [Tracker(id: UUID(),
                                                     name: "Полить растение",
                                                    color: .red,
@@ -33,7 +33,7 @@ final class TrackersViewController: UIViewController, UITextFieldDelegate {
                                                    name: "Погулять",
                                                    color: .green,
                                                    emoji: "🍊",
-                                                   schedule: [1,2,3,4,5,6,7])])]
+                                                   schedule: [1,2,3,4,5,6,7])])]*/
     var showCategories: [TrackerCategory] = []
     
     var completedTrackers: [TrackerRecord] = []
@@ -257,31 +257,42 @@ extension TrackersViewController: AddTrackerDelegateProtocol {
     func addTracker(_ trackerCategoryHeader: String, _ tracker: Tracker) {
         dismiss(animated: true)
         
-        var removeIndex: Int?
-        var ListOfTrackers: [Tracker] = []
-        for i in 0..<categories.count {
-            if categories[i].header == trackerCategoryHeader {
-                ListOfTrackers = categories[i].relevantTrackers
-                removeIndex = i
+        if !categories.isEmpty {
+            var removeIndex: Int?
+            var ListOfTrackers: [Tracker] = []
+            for i in 0..<categories.count {
+                if categories[i].header == trackerCategoryHeader {
+                    ListOfTrackers = categories[i].relevantTrackers
+                    removeIndex = i
+                }
             }
+            
+            guard let removeIndex else { return }
+            categories.remove(at: removeIndex)
+            
+            ListOfTrackers.append(tracker)
+            let remasteredCategory = TrackerCategory(header: trackerCategoryHeader, relevantTrackers: ListOfTrackers)
+            categories.insert(remasteredCategory, at: removeIndex)
+        } else {
+            var firstListOfTrackers: [Tracker] = []
+            firstListOfTrackers.append(tracker)
+            let firstCategory = TrackerCategory(header: trackerCategoryHeader, relevantTrackers: firstListOfTrackers)
+            categories.append(firstCategory)
         }
-        
-        guard let removeIndex else { return }
-        categories.remove(at: removeIndex)
-        
-        ListOfTrackers.append(tracker)
-        let remasteredCategory = TrackerCategory(header: trackerCategoryHeader, relevantTrackers: ListOfTrackers)
-        categories.insert(remasteredCategory, at: removeIndex)
-        print(categories)
-        
-        takeNewTrackerIntoAccount()
+        if showCategories.isEmpty {
+            takeNewTrackerIntoAccount(regime: "showCollectionViewFirstTime")
+        } else {
+            takeNewTrackerIntoAccount(regime: "collectionViewReloadData")
+        }
     }
     
-    private func takeNewTrackerIntoAccount() {
+    private func takeNewTrackerIntoAccount(regime: String) {
         setTrackersToShow()
         if showCategories.isEmpty {
             addStub()
-        } else {
+        } else  if regime == "showCollectionViewFirstTime" {
+            addCollectionView()
+        } else if regime == "collectionViewReloadData" {
             trackersCollectionView.reloadData()
         }
     }
