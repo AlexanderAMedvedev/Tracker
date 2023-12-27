@@ -1,19 +1,16 @@
 //
-//  ViewController.swift
+//  Statistics.swift
 //  Tracker
 //
 //  Created by Александр Медведев on 23.11.2023.
 //
 
+import Foundation
 import UIKit
 
-class ViewController: UIViewController {
-
+final class StatisticsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        view.backgroundColor = .ypWhiteDay
     }
-
-
 }
-
