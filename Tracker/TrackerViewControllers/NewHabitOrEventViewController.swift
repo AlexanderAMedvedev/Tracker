@@ -10,6 +10,13 @@ import UIKit
 
 final class NewHabitOrEventViewController: UIViewController {
     
+    private let screenScrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.contentSize = CGSize(width: UIScreen.main.bounds.width, height: 900)
+        return scrollView
+    }()
+    
     var headerString: String
     
     var trackerCategoryHeader: String?
@@ -27,7 +34,22 @@ final class NewHabitOrEventViewController: UIViewController {
         return createButton
     }()
 
+    let cancelButton: UIButton = {
+        var cancelButton = UIButton(type: .custom)
+        return cancelButton
+    }()
+    
     let emojies = ["🙂","😻","🌺","🐶","❤️","😱","😇","😡","🥇","🥶","🤔","🙌","🍔","🥦","🏓","🎸","🏝","😪"]
+    
+    let emojiCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+    
+    let colorCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+    
+    var helperColorCollection:  HelperColorCollection?
+    
+    var emoji: String?
+    
+    var color: UIColor?
     
     weak var delegate: IntermediateDelegateProtocol?
     
@@ -45,11 +67,49 @@ final class NewHabitOrEventViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .ypWhiteDay
+        helperColorCollection = HelperColorCollection(delegate: self)
+        
+        addScreenScroll()
         addHeader()
         addInputTextField()
         addOptionsTable()
-       // addEmoji()
+        addEmoji()
+        addColorSelection()
         addCancelAndCreateButtons()
+    }
+    private func addScreenScroll() {
+        view.addSubview(screenScrollView)
+        NSLayoutConstraint.activate([
+            screenScrollView.topAnchor.constraint(equalTo: view.topAnchor),
+            screenScrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            screenScrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            screenScrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            ])
+    }
+    private func addColorSelection() {
+        let colorHeader = UILabel()
+        colorHeader.text = "Цвет"
+        colorHeader.font = UIFont.systemFont(ofSize: 19, weight: .bold)
+        colorHeader.textColor = .ypBlackDay
+        colorHeader.translatesAutoresizingMaskIntoConstraints = false
+        screenScrollView.addSubview(colorHeader)
+        NSLayoutConstraint.activate([
+            colorHeader.topAnchor.constraint(equalTo: emojiCollectionView.bottomAnchor, constant: 16),
+            colorHeader.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 28)
+            ])
+        
+        colorCollectionView.register(ColorCollectionViewCell.self, forCellWithReuseIdentifier: ColorCollectionViewCell.reuseIdentifier)
+        colorCollectionView.dataSource = helperColorCollection
+        colorCollectionView.delegate = helperColorCollection
+        colorCollectionView.allowsMultipleSelection = false
+        colorCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        screenScrollView.addSubview(colorCollectionView)
+        NSLayoutConstraint.activate([
+            colorCollectionView.topAnchor.constraint(equalTo: colorHeader.bottomAnchor),
+            colorCollectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 18),
+            colorCollectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -18),
+            colorCollectionView.heightAnchor.constraint(equalToConstant: 180)
+            ])
     }
     
     private func addOptionsTable() {
@@ -58,7 +118,7 @@ final class NewHabitOrEventViewController: UIViewController {
        optionsTableView.delegate = self
        optionsTableView.layer.cornerRadius = 16
        optionsTableView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(optionsTableView)
+        screenScrollView.addSubview(optionsTableView)
         NSLayoutConstraint.activate([
             optionsTableView.widthAnchor.constraint(equalToConstant: 343),
             optionsTableView.heightAnchor.constraint(equalToConstant: CGFloat(optionsString.count*75)),
@@ -73,25 +133,24 @@ final class NewHabitOrEventViewController: UIViewController {
         emojiHeader.font = UIFont.systemFont(ofSize: 19, weight: .bold)
         emojiHeader.textColor = .ypBlackDay
         emojiHeader.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(emojiHeader)
+        screenScrollView.addSubview(emojiHeader)
         NSLayoutConstraint.activate([
             emojiHeader.topAnchor.constraint(equalTo: optionsTableView.bottomAnchor, constant: 32),
             emojiHeader.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 28),
             ])
             
-        
-        let emojiCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+        emojiCollectionView.allowsMultipleSelection = false
         emojiCollectionView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(emojiCollectionView)
+        screenScrollView.addSubview(emojiCollectionView)
         NSLayoutConstraint.activate([
             emojiCollectionView.topAnchor.constraint(equalTo: emojiHeader.bottomAnchor),
-            emojiCollectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            emojiCollectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: 348),
-            emojiCollectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            emojiCollectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 18),
+            emojiCollectionView.heightAnchor.constraint(equalToConstant: 180),
+            emojiCollectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -18),
             ])
         emojiCollectionView.register(EmojiCollectionViewCell.self, forCellWithReuseIdentifier: EmojiCollectionViewCell.reuseIdentifier)
         emojiCollectionView.dataSource = self
-       // emojiCollectionView.delegate = EmojiCollectionViewClass()
+        emojiCollectionView.delegate = self
     }
     
     private func addHeader()  {
@@ -100,10 +159,10 @@ final class NewHabitOrEventViewController: UIViewController {
         header.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         header.textColor = .ypBlackDay
         header.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(header)
+        screenScrollView.addSubview(header)
         NSLayoutConstraint.activate([
-            header.topAnchor.constraint(equalTo: view.topAnchor, constant: 35),
-            header.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+            header.topAnchor.constraint(equalTo: screenScrollView.topAnchor, constant: 35),
+            header.centerXAnchor.constraint(equalTo: screenScrollView.centerXAnchor)
         ])
         return
     }
@@ -117,18 +176,17 @@ final class NewHabitOrEventViewController: UIViewController {
         textField.backgroundColor = .ypGrayBackground
         textField.layer.cornerRadius = 16
         textField.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(textField)
+        screenScrollView.addSubview(textField)
         NSLayoutConstraint.activate([
             textField.widthAnchor.constraint(equalToConstant: 343),
             textField.heightAnchor.constraint(equalToConstant: 75),
-            textField.topAnchor.constraint(equalTo: view.topAnchor, constant: 100),
-            textField.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+            textField.topAnchor.constraint(equalTo: screenScrollView.topAnchor, constant: 100),
+            textField.centerXAnchor.constraint(equalTo: screenScrollView.centerXAnchor)
         ])
         return
     }
     
     private func addCancelAndCreateButtons() {
-        let cancelButton = UIButton(type: .custom)
         cancelButton.backgroundColor = .ypWhiteDay
         cancelButton.setTitle("Отменить", for: .normal)
         cancelButton.setTitleColor(.ypRedCancelButton, for: .normal)
@@ -138,7 +196,7 @@ final class NewHabitOrEventViewController: UIViewController {
         cancelButton.layer.borderColor = UIColor.ypRedCancelButton.cgColor // красим рамку
         cancelButton.addTarget(self, action: #selector(self.didTapCancelButton), for: .touchUpInside)
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(cancelButton)
+        screenScrollView.addSubview(cancelButton)
                 
         
         createButton.backgroundColor = .ypGray
@@ -148,18 +206,18 @@ final class NewHabitOrEventViewController: UIViewController {
         createButton.addTarget(self, action: #selector(self.didTapCreateButton), for: .touchUpInside)
         createButton.isEnabled = false
         createButton.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(createButton)
+        screenScrollView.addSubview(createButton)
         
         NSLayoutConstraint.activate([
             cancelButton.heightAnchor.constraint(equalToConstant: 60),
             cancelButton.widthAnchor.constraint(equalTo: createButton.widthAnchor, multiplier: 1),
             cancelButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
             cancelButton.trailingAnchor.constraint(equalTo: createButton.leadingAnchor, constant: -8),
-            cancelButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            cancelButton.topAnchor.constraint(equalTo: colorCollectionView.bottomAnchor, constant: 16),
             //
             createButton.heightAnchor.constraint(equalTo: cancelButton.heightAnchor, multiplier: 1),
             createButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
-            createButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            createButton.topAnchor.constraint(equalTo: cancelButton.topAnchor),
             ])
     }
             
@@ -174,15 +232,16 @@ final class NewHabitOrEventViewController: UIViewController {
     }
     
     func createTracker() {
-        guard let trackerCategoryHeader else { return }
+        guard let trackerCategoryHeader,
+              let emoji else { return }
         //создание расписания для нерегулярного трекера
         if timeTable.count == 0 {
             timeTable = [1,2,3,4,5,6,7]
         }
             let tracker = Tracker(id: UUID(),
                                   name: textField.text ?? "",
-                                  color: .blue,
-                                  emoji: "🙂",
+                                  color: color ?? .blue,
+                                  emoji: emoji,
                                   schedule: timeTable
                                   )
         delegate?.addTracker(trackerCategoryHeader, tracker)
@@ -190,6 +249,9 @@ final class NewHabitOrEventViewController: UIViewController {
     
     func refreshTable(indexPath: IndexPath) {
         optionsTableView.reloadRows(at: [indexPath], with: .none)
+    }
+    
+    func makeCreateButtonActive() {
         createButton.isEnabled = true
         createButton.backgroundColor = .ypBlackDay
     }
@@ -277,6 +339,33 @@ extension NewHabitOrEventViewController: UICollectionViewDataSource {
         cell.emojiSymbol.text = emojies[indexPath.row]
         return cell
     }
+}
+
+extension NewHabitOrEventViewController: UICollectionViewDelegateFlowLayout {
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+            return CGSize(width: 52, height: 52)
+        }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+            return 0
+        }
+    
+}
+extension NewHabitOrEventViewController: UICollectionViewDelegate {
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let cell = (collectionView.cellForItem(at: indexPath) as! EmojiCollectionViewCell)
+        cell.contentView.backgroundColor = .ypGrayForChoosingEmoji
+        cell.contentView.layer.cornerRadius = 16
+        emoji = emojies[indexPath.item]
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        let cell = (collectionView.cellForItem(at: indexPath) as! EmojiCollectionViewCell)
+        cell.contentView.backgroundColor = .none
+    }
+    
 }
 
 extension NewHabitOrEventViewController: UITextFieldDelegate {

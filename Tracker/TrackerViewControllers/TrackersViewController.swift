@@ -279,6 +279,7 @@ extension TrackersViewController: AddTrackerDelegateProtocol {
             firstListOfTrackers.append(tracker)
             let firstCategory = TrackerCategory(header: trackerCategoryHeader, relevantTrackers: firstListOfTrackers)
             categories.append(firstCategory)
+            
         }
         if showCategories.isEmpty {
             takeNewTrackerIntoAccount(regime: "showCollectionViewFirstTime")
